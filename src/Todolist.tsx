@@ -1,7 +1,14 @@
 import React from "react";
 
+type TaskType = {
+  id: number;
+  title: string;
+  isDone: boolean;
+};
+
 type TodolistPropsType = {
   title: string;
+  tasks: Array<TaskType>;
 };
 
 export function Todolist(props: TodolistPropsType) {
