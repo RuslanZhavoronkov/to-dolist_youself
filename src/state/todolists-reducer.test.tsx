@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {
+    TodolistType,
     addTodolistAC,
     changeTodolistFilterAC,
     changeTodolistTitleAC,
@@ -7,7 +8,8 @@ import {
     todolistsReducer
 } from './todolists-reducer';
 import {v1} from 'uuid';
-import {FilterValuesType, TodolistType} from '../App';
+import { FilterValuesType } from '../AppWithRedux';
+
 
 test('correct todolist should be removed', () => {
     let todolistId1 = v1();
