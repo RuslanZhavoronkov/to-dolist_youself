@@ -115,26 +115,39 @@ export const CreateTask = () => {
     }, [])
 
     return (
-       <div>{JSON.stringify(state)}</div>
+        <div>{JSON.stringify(state)}</div>
     )
 }
 
 
 //delete request
 export const DeleteTask = () => {
-    return (
-        useEffect(() => {
+    const [state, setState] = useState<any>(null)
 
+    useEffect(() => {
+        const todolistId ='' 
+        const taskId = ''
+        todolistsAPI.deleteTask(todolistId, taskId)
+        .then((response) => {
+            setState(response.data)
         })
+    }, [])
+
+    return (
+        <div>{JSON.stringify(state)}</div>
     )
 }
 
 
 //update request
 export const UpdateTask = () => {
-    return (
-        useEffect(() => {
+    const [state, setState] = useState<any>(null)
 
-        })
+    useEffect(() => {
+
+    }, [])
+
+    return (
+        <div>{JSON.stringify(state)}</div>
     )
 }
