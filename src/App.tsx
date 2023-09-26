@@ -15,9 +15,7 @@ import {
     addTodolistAC,
     changeTodolistFilterAC,
     changeTodolistTitleAC,
-  
     fetchTodolistsThunkTC,
-  
     FilterValuesType,
     removeTodolistAC,
     setTodolistsAC,
