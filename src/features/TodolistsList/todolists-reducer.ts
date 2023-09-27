@@ -1,5 +1,5 @@
 import { v1 } from 'uuid';
-import { TodolistType, todolistsAPI } from '../api/todolists-api'
+import { TodolistType, todolistsAPI } from '../../api/todolists-api'
 import { Dispatch } from 'redux';
 
 const initialState: Array<TodolistDomainType> = [

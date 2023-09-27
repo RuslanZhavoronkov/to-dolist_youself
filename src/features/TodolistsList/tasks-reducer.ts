@@ -1,9 +1,9 @@
-import { TasksStateType } from '../App';
+
 import { v1 } from 'uuid';
 import { AddTodolistACType, RemoveTodolistActionType, SetTodolistsACType } from './todolists-reducer';
-import { TaskPriorities, TaskStatuses, TaskType, UpdateTaskModelType, todolistsAPI } from '../api/todolists-api'
+import { TaskPriorities, TaskStatuses, TaskType, UpdateTaskModelType, todolistsAPI } from '../../api/todolists-api'
 import { Dispatch } from 'redux';
-import { AppRootStateType } from './store';
+import { AppRootStateType } from '../../app/store';
 
 
 
@@ -120,4 +120,8 @@ export const updateTaskTC = (todolistId: string, taskId: string, domainModel: Up
         priority?: TaskPriorities
         startDate?: string
         deadline?: string
+    }
+
+    export type TasksStateType = {
+        [key: string]: Array<TaskType>
     }
