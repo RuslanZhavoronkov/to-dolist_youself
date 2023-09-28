@@ -15,6 +15,7 @@ export const todolistsReducer = (state: Array<TodolistDomainType> = initialState
             return state.filter(tl => tl.id !== action.id)
         }
         case 'ADD-TODOLIST':
+            debugger
             return [{ ...action.todolist, filter: 'all' }, ...state]
 
         case 'CHANGE-TODOLIST-TITLE':
@@ -62,6 +63,7 @@ export const removeTodolistTC = (id: string): AppThunkType => async (dispatch: D
 export const addTodolistTC = (title: string): AppThunkType => async (dispatch: Dispatch<AppActionsType>) => {
     try {
         const response = await todolistsAPI.createTodolist(title)
+         debugger;
         dispatch(addTodolistAC(response.data.data.item))
     } catch (e) {
         console.log('Error')

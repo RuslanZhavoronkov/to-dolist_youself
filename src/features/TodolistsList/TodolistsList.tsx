@@ -9,15 +9,16 @@ import Grid from "@mui/material/Grid"
 import { AddItemForm } from "../../components/AddItemForm/AddItemForm"
 import Paper from "@mui/material/Paper"
 import { Todolist } from "./Todolist/Todolist"
+import { useAppDispatch, useAppSelector } from "../../app/hoks"
 
 export const TodolistsList = () =>  {
     useEffect(() => {
         dispatch(fetchTodolistsThunkTC())
     }, [])
 
-    const todolists = useSelector<AppRootStateType, Array<TodolistDomainType>>(state => state.todolists)
-    const tasks = useSelector<AppRootStateType, TasksStateType>(state => state.tasks)
-    const dispatch: AppDispatchType = useDispatch();
+    const todolists = useAppSelector(state => state.todolists)
+    const tasks = useAppSelector(state => state.tasks)
+    const dispatch = useAppDispatch()
 
     const removeTask = useCallback(function (id: string, todolistId: string) {
         dispatch(removeTaskTC(todolistId, id))
@@ -49,6 +50,7 @@ export const TodolistsList = () =>  {
     }, []);
 
     const addTodolist = useCallback((title: string) => {
+        debugger
         dispatch(addTodolistTC(title))
     }, [dispatch]);
     return (
