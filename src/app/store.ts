@@ -1,6 +1,6 @@
-import thunk, { ThunkDispatch } from 'redux-thunk';
-import { tasksReducer } from '../features/TodolistsList/tasks-reducer';
-import { todolistsReducer } from '../features/TodolistsList/todolists-reducer';
+import thunk, { ThunkAction, ThunkDispatch } from 'redux-thunk';
+import { TaskActionsType, tasksReducer } from '../features/TodolistsList/tasks-reducer';
+import { TodolistActionsType, todolistsReducer } from '../features/TodolistsList/todolists-reducer';
 import {AnyAction, applyMiddleware, combineReducers, createStore, legacy_createStore} from 'redux';
 
 // объединяя reducer-ы с помощью combineReducers,
@@ -17,3 +17,9 @@ export type AppDispatchType = ThunkDispatch<AppRootStateType,any,AnyAction>
 // а это, чтобы можно было в консоли браузера обращаться к store в любой момент
 // @ts-ignore
 window.store = store;
+
+//Делаем главный тип Action для проекта
+export type AppActionsType = TodolistActionsType | TaskActionsType
+
+//Сделаем универсальный тип thunk
+export type AppThunkType<ReturnType = void> = ThunkAction<ReturnType, AppRootStateType, unknown, AppActionsType>
