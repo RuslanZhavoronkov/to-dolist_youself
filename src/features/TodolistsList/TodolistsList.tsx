@@ -1,4 +1,5 @@
-import React, { useCallback, useEffect } from 'react'
+import React, {useCallback, useEffect} from 'react'
+import {useAppDispatch, useAppSelector} from '../../app/store'
 import {
     addTodolistTC,
     changeTodolistFilterAC,
@@ -8,14 +9,13 @@ import {
     removeTodolistTC,
     TodolistDomainType
 } from './todolists-reducer'
-import { addTaskTC, removeTaskTC, TasksStateType, updateTaskTC } from './tasks-reducer'
-import { TaskStatuses } from '../../api/todolists-api'
-import { AddItemForm } from '../../components/AddItemForm/AddItemForm'
-import { Todolist } from './Todolist/Todolist'
+import {addTaskTC, removeTaskTC, TasksStateType, updateTaskTC} from './tasks-reducer'
+import {TaskStatuses} from '../../api/todolists-api'
+import {AddItemForm} from '../../components/AddItemForm/AddItemForm'
+import {Todolist} from './Todolist/Todolist'
 
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
-import { useAppDispatch, useAppSelector } from '../../hocs/hoc'
 
 export const TodolistsList: React.FC = () => {
 
@@ -40,12 +40,12 @@ export const TodolistsList: React.FC = () => {
     }, [])
 
     const changeStatus = useCallback(function (id: string, status: TaskStatuses, todolistId: string) {
-        const thunk = updateTaskTC(id, { status }, todolistId)
+        const thunk = updateTaskTC(id, {status}, todolistId)
         dispatch(thunk)
     }, [])
 
     const changeTaskTitle = useCallback(function (id: string, newTitle: string, todolistId: string) {
-        const thunk = updateTaskTC(id, { title: newTitle }, todolistId)
+        const thunk = updateTaskTC(id, {title: newTitle}, todolistId)
         dispatch(thunk)
     }, [])
 
@@ -71,8 +71,8 @@ export const TodolistsList: React.FC = () => {
 
 
     return <>
-        <Grid container style={{ padding: '20px' }}>
-            <AddItemForm addItem={addTodolist} />
+        <Grid container style={{padding: '20px'}}>
+            <AddItemForm addItem={addTodolist}/>
         </Grid>
         <Grid container spacing={3}>
             {
@@ -80,14 +80,16 @@ export const TodolistsList: React.FC = () => {
                     let allTodolistTasks = tasks[tl.id]
 
                     return <Grid item key={tl.id}>
-                        <Paper style={{ padding: '10px' }}>
+                        <Paper style={{padding: '10px'}}>
                             <Todolist
-                                todolist={tl}
+                                id={tl.id}
+                                title={tl.title}
                                 tasks={allTodolistTasks}
                                 removeTask={removeTask}
                                 changeFilter={changeFilter}
                                 addTask={addTask}
                                 changeTaskStatus={changeStatus}
+                                filter={tl.filter}
                                 removeTodolist={removeTodolist}
                                 changeTaskTitle={changeTaskTitle}
                                 changeTodolistTitle={changeTodolistTitle}

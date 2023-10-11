@@ -1,29 +1,26 @@
-import { Dispatch } from "redux"
-import { AppActionType } from "./store"
 
-
-
-const initialState = {
-    status: 'idle' as RequestStatusType,
-    error: null
+const initialState: InitialStateType = {
+    status: "idle",
+    error: 'some errorrrrr'
 }
 
-
-export const appReducer = (state: InitialAppStateType = initialState, action: APPActionsType): InitialAppStateType => {
+export const appReducer = (state: InitialStateType = initialState, action: AppActionType) => {
     switch (action.type) {
-        case 'APP/SET-STATUS':
-            return {...state, status: action.payload.status}
-        case 'APP/SET-ERROR':{
-            return {...state, error: action.payload.error}
-        }    
-        default:
+        case 'APP/SET-STATUS': {
+            return { ...state, status: action.payload.status }
+        }
+        case 'APP/SET-ERROR': {
+            return { ...state, error: action.payload.error }
+        }
+        default: {
             return state
+        }
     }
 }
 
 
-//ActionCreate
-export const setStatusAC = (status: RequestStatusType) => {
+//Action-create
+export const appSetStatusAC = (status: StatusType) => {
     return {
         type: 'APP/SET-STATUS',
         payload: {
@@ -32,7 +29,7 @@ export const setStatusAC = (status: RequestStatusType) => {
     } as const
 }
 
-export const setErrorAC = (error: string| null) => {
+export const appSetErrorAC = (error: null | string) => {
     return {
         type: 'APP/SET-ERROR',
         payload: {
@@ -42,11 +39,13 @@ export const setErrorAC = (error: string| null) => {
 }
 
 //type
-export type RequestStatusType = 'idle' | 'loading' | 'succeeded' | 'failed'
-export type InitialAppStateType = {
-    status: RequestStatusType
-    error: string | null
+export type InitialStateType = {
+    //происходит ли сейчас взаимодействие с сервером
+    status: StatusType // показывать крутилку или не показывать 
+    //если ошибка глобально какая то произойдет - мы запишем текст ошибки сюда
+    error: string | null //если есть ошибка, то запишем ее текст сюда
 }
-export type setStatusACType = ReturnType <typeof setStatusAC>
-export type setErrorACType = ReturnType<typeof setErrorAC>
-export type APPActionsType = setStatusACType | setErrorACType
+type StatusType = 'idle' | 'loading' | 'succeeded' | 'failed'
+type AppSetStatusActionType = ReturnType<typeof appSetStatusAC>
+type AppSetErrorActionType = ReturnType<typeof appSetErrorAC>
+export type AppActionType = AppSetStatusActionType | AppSetErrorActionType

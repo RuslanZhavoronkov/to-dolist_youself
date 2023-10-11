@@ -13,15 +13,15 @@ import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import { Menu } from '@mui/icons-material';
 import LinearProgress from '@mui/material/LinearProgress/LinearProgress';
-import ErrorSnackbar from '../components/ErrorSnackbar/ErrorSnackbar';
-import { useAppSelector } from '../hocs/hoc';
+import {ErrorSnackbars} from '../components/ErrorSnackbar/ErrorSnackbar';
+import { useAppSelector } from './store';
 
 
 function App() {
 const status = useAppSelector(state => state.app.status)
     return (
         <div className="App">
-            <ErrorSnackbar/>
+             <ErrorSnackbars/>
             <AppBar position="static">
                 <Toolbar>
                     <IconButton edge="start" color="inherit" aria-label="menu">
@@ -32,7 +32,7 @@ const status = useAppSelector(state => state.app.status)
                     </Typography>
                     <Button color="inherit">Login</Button>
                 </Toolbar>
-                {status === 'loading' && <LinearProgress />}
+               {status === 'loading' && <LinearProgress />}
             </AppBar>
             <Container fixed>
                 <TodolistsList/>
