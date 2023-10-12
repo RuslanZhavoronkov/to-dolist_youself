@@ -45,7 +45,7 @@ export type InitialStateType = {
     //если ошибка глобально какая то произойдет - мы запишем текст ошибки сюда
     error: string | null //если есть ошибка, то запишем ее текст сюда
 }
-type StatusType = 'idle' | 'loading' | 'succeeded' | 'failed'
+export type StatusType = 'idle' | 'loading' | 'succeeded' | 'failed'
 type AppSetStatusActionType = ReturnType<typeof appSetStatusAC>
 type AppSetErrorActionType = ReturnType<typeof appSetErrorAC>
 export type AppActionType = AppSetStatusActionType | AppSetErrorActionType

@@ -3,6 +3,7 @@ import { TaskPriorities, TaskStatuses, TaskType, todolistsAPI, UpdateTaskModelTy
 import { Dispatch } from 'redux'
 import { AppRootActionType, AppRootStateType } from '../../app/store'
 import { appSetErrorAC, appSetStatusAC } from '../../app/app-reducer'
+import { handleServerAppError, handleServerNetworkError } from '../../utils/error-utils'
 
 const initialState: TasksStateType = {}
 
@@ -55,7 +56,7 @@ export const fetchTasksTC = (todolistId: string) => (dispatch: Dispatch<AppRootA
         .then((res) => {
             const tasks = res.data.items
             dispatch(setTasksAC(tasks, todolistId))
-          dispatch(appSetStatusAC('succeeded'))
+            dispatch(appSetStatusAC('succeeded'))
         })
 }
 export const removeTaskTC = (taskId: string, todolistId: string) => (dispatch: Dispatch<AppRootActionType>) => {
@@ -74,13 +75,11 @@ export const addTaskTC = (title: string, todolistId: string) => (dispatch: Dispa
                 dispatch(addTaskAC(task))
                 dispatch(appSetStatusAC('succeeded'))
             } else {
-                if (res.data.messages.length > 0) {
-                    dispatch(appSetErrorAC(res.data.messages[0]))
-                } else {
-                    dispatch(appSetErrorAC('Some error occurred'))
-                }
-                dispatch(appSetStatusAC('failed'))
+                handleServerAppError(res.data, dispatch)
             }
+        })
+        .catch((error) => {
+            handleServerNetworkError(error.message, dispatch)
         })
 }
 export const updateTaskTC = (taskId: string, domainModel: UpdateDomainTaskModelType, todolistId: string) =>
@@ -105,8 +104,14 @@ export const updateTaskTC = (taskId: string, domainModel: UpdateDomainTaskModelT
 
         todolistsAPI.updateTask(todolistId, taskId, apiModel)
             .then(res => {
-                const action = updateTaskAC(taskId, domainModel, todolistId)
-                dispatch(action)
+                if (res.data.resultCode === 0) {
+                    dispatch(updateTaskAC(taskId, domainModel, todolistId))
+                } else {
+                    handleServerAppError(res.data, dispatch)
+                }
+            })
+            .catch((error) => {
+               handleServerNetworkError(error.message, dispatch)
             })
     }
 

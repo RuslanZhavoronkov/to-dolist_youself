@@ -17,7 +17,12 @@ import {ErrorSnackbars} from '../components/ErrorSnackbar/ErrorSnackbar';
 import { useAppSelector } from './store';
 
 
-function App() {
+type AppPropsType = {
+    demo?: boolean
+}
+
+
+function App({demo = false, ...props}:AppPropsType) {
 const status = useAppSelector(state => state.app.status)
     return (
         <div className="App">
@@ -35,7 +40,7 @@ const status = useAppSelector(state => state.app.status)
                {status === 'loading' && <LinearProgress />}
             </AppBar>
             <Container fixed>
-                <TodolistsList/>
+                <TodolistsList demo = {demo}/>
             </Container>
         </div>
     )
