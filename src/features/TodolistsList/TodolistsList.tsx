@@ -11,27 +11,22 @@ import {
 } from './todolists-reducer'
 import { addTaskTC, removeTaskTC, TasksStateType, updateTaskTC } from './tasks-reducer'
 import { TaskStatuses } from '../../api/todolists-api'
-import { AddItemForm } from '../../components/AddItemForm/AddItemForm'
-import { Todolist } from './Todolist/Todolist'
-
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
+import { AddItemForm } from '../../components/AddItemForm/AddItemForm'
+import { Todolist } from './Todolist/Todolist'
+import { Navigate } from 'react-router-dom'
 
-type TodolistsListPropsType = {
-    demo?: boolean
-}
 
-export const TodolistsList: React.FC<TodolistsListPropsType> = ({ demo = false, ...props }) => {
-
+export const TodolistsList: React.FC = () => {
     const todolists = useAppSelector<Array<TodolistDomainType>>(state => state.todolists)
     const tasks = useAppSelector<TasksStateType>(state => state.tasks)
-
     const dispatch = useAppDispatch()
+    const isLoggedIn = useAppSelector(state => state.auth.isLoginIn)
+    
+    
 
     useEffect(() => {
-        if (demo) {  //если демо-режим то запрос за тасками не делаем
-            return
-        }
         const thunk = fetchTodolistsTC()
         dispatch(thunk)
     }, [])
@@ -74,8 +69,12 @@ export const TodolistsList: React.FC<TodolistsListPropsType> = ({ demo = false, 
     const addTodolist = useCallback((title: string) => {
         const thunk = addTodolistTC(title)
         dispatch(thunk)
-    }, [])
+    }, [dispatch])
 
+    
+    if (!isLoggedIn) {
+        return <Navigate to={'/login'} />
+    }
 
     return <>
         <Grid container style={{ padding: '20px' }}>
@@ -98,7 +97,6 @@ export const TodolistsList: React.FC<TodolistsListPropsType> = ({ demo = false, 
                                 removeTodolist={removeTodolist}
                                 changeTaskTitle={changeTaskTitle}
                                 changeTodolistTitle={changeTodolistTitle}
-                                demo={demo}
                             />
                         </Paper>
                     </Grid>

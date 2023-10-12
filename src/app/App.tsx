@@ -1,48 +1,64 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import './App.css'
 import { TodolistsList } from '../features/TodolistsList/TodolistsList'
-
-// You can learn about the difference by reading this guide on minimizing bundle size.
-// https://mui.com/guides/minimizing-bundle-size/
-// import { AppBar, Button, Container, IconButton, Toolbar, Typography } from '@mui/material';
+import { useAppDispatch, useAppSelector } from './store'
+import { RequestStatusType, setAppInitializedTC } from './app-reducer'
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
+import LinearProgress from '@mui/material/LinearProgress';
 import { Menu } from '@mui/icons-material';
-import LinearProgress from '@mui/material/LinearProgress/LinearProgress';
-import {ErrorSnackbars} from '../components/ErrorSnackbar/ErrorSnackbar';
-import { useAppSelector } from './store';
+import { ErrorSnackbar } from '../components/ErrorSnackbar/ErrorSnackbar'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { Login } from '../features/Login/Login'
+import CircularProgress from '@mui/material/CircularProgress/CircularProgress'
 
 
-type AppPropsType = {
-    demo?: boolean
-}
+function App() {
+    const status = useAppSelector<RequestStatusType>((state) => state.app.status)
+    const isInitialized = useAppSelector(state => state.app.isInitialized)
+    const dispatch = useAppDispatch()
 
+    useEffect(() => {
+        dispatch(setAppInitializedTC())
+    }, [])
 
-function App({demo = false, ...props}:AppPropsType) {
-const status = useAppSelector(state => state.app.status)
-    return (
-        <div className="App">
-             <ErrorSnackbars/>
-            <AppBar position="static">
-                <Toolbar>
-                    <IconButton edge="start" color="inherit" aria-label="menu">
-                        <Menu/>
-                    </IconButton>
-                    <Typography variant="h6">
-                        News
-                    </Typography>
-                    <Button color="inherit">Login</Button>
-                </Toolbar>
-               {status === 'loading' && <LinearProgress />}
-            </AppBar>
-            <Container fixed>
-                <TodolistsList demo = {demo}/>
-            </Container>
+    if (!isInitialized) {
+        return <div style={{ position: 'fixed', top: '30%', textAlign: 'center', width: '100%' }}>
+            <CircularProgress />
         </div>
+    }
+
+
+    return (
+        <BrowserRouter>
+            <div className="App">
+                <ErrorSnackbar />
+                <AppBar position="static">
+                    <Toolbar>
+                        <IconButton edge="start" color="inherit" aria-label="menu">
+                            <Menu />
+                        </IconButton>
+                        <Typography variant="h6">
+                            News
+                        </Typography>
+                        <Button color="inherit">Login</Button>
+                    </Toolbar>
+                    {status === 'loading' && <LinearProgress />}
+                </AppBar>
+                <Container fixed>
+                    <Routes>
+                        <Route path={'/'} element={<TodolistsList />} />
+                        <Route path={'/login'} element={<Login />}></Route>
+                    </Routes>
+
+                </Container>
+            </div>
+        </BrowserRouter>
+
     )
 }
 
