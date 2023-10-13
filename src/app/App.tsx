@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import './App.css'
 import { TodolistsList } from '../features/TodolistsList/TodolistsList'
 import { useAppDispatch, useAppSelector } from './store'
@@ -15,13 +15,16 @@ import { ErrorSnackbar } from '../components/ErrorSnackbar/ErrorSnackbar'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { Login } from '../features/Login/Login'
 import CircularProgress from '@mui/material/CircularProgress/CircularProgress'
+import { loginOutTC } from '../features/Login/login-reducer'
 
 
 function App() {
     const status = useAppSelector<RequestStatusType>((state) => state.app.status)
     const isInitialized = useAppSelector(state => state.app.isInitialized)
-    const dispatch = useAppDispatch()
+    const isLoggedIn = useAppSelector(state => state.auth.isLoginIn)
 
+    const dispatch = useAppDispatch()
+    
     useEffect(() => {
         dispatch(setAppInitializedTC())
     }, [])
@@ -31,6 +34,10 @@ function App() {
             <CircularProgress />
         </div>
     }
+
+    const logOutHandler = useCallback(() => {
+        dispatch(loginOutTC())
+    }, [])
 
 
     return (
@@ -45,7 +52,7 @@ function App() {
                         <Typography variant="h6">
                             News
                         </Typography>
-                        <Button color="inherit">Login</Button>
+                        {isLoggedIn && <Button color="inherit" onClick={logOutHandler}>Log out</Button>}
                     </Toolbar>
                     {status === 'loading' && <LinearProgress />}
                 </AppBar>

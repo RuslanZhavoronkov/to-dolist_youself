@@ -13,6 +13,7 @@ const initialLoginState = {
 export const authReducer = (state:LoginStateType = initialLoginState, action: LoginActionType):LoginStateType  => {
     switch(action.type) {
         case 'login/SET-IS-LOGIN-IN' : {
+         
             return {...state, isLoginIn: action.payload.isLoginIn}
         }
         default: {
@@ -25,7 +26,7 @@ export const authReducer = (state:LoginStateType = initialLoginState, action: Lo
 
 
 //action-create
-const isLoginInChangeAC = (isLoginIn: boolean) => {
+export const isLoginInChangeAC = (isLoginIn: boolean) => {
     return {
         type: 'login/SET-IS-LOGIN-IN',
 payload: {
@@ -43,6 +44,21 @@ export const loginTC = (data: LoginParamsType) => (dispatch: Dispatch<AppRootSta
     .then((response)=> {
         if(response.data.resultCode === 0) {
             dispatch(isLoginInChangeAC(true))
+            dispatch(setAppStatusAC('succeeded'))
+        } else {
+            handleServerAppError(response.data, dispatch);
+        }
+    })
+    .catch((error) => {
+        handleServerNetworkError(error, dispatch);
+    })
+}
+
+export const loginOutTC = ()=> (dispatch: Dispatch<AppRootStateActionType>) => {
+    authAPI.logOut()
+    .then((response)=> {
+        if(response.data.resultCode === 0) {
+            dispatch(isLoginInChangeAC(false))
             dispatch(setAppStatusAC('succeeded'))
         } else {
             handleServerAppError(response.data, dispatch);

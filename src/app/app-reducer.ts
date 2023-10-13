@@ -2,6 +2,7 @@ import { Dispatch } from "redux"
 import { authAPI } from "../api/todolists-api"
 import { AppRootStateActionType } from "./store"
 import { handleServerAppError, handleServerNetworkError } from "../utils/error-utils"
+import { isLoginInChangeAC } from "../features/Login/login-reducer"
 
 const initialState: InitialStateType = {
     status: 'idle',
@@ -16,7 +17,7 @@ export const appReducer = (state: InitialStateType = initialState, action: AppAc
         case 'APP/SET-ERROR':
             return { ...state, error: action.error }
         case "APP/SET-IS-INITIALIZED": {
-          
+        
             return { ...state, isInitialized: action.payload.isInitialized }
         }
         default:
@@ -43,19 +44,18 @@ export const setAppInitializedTC = () => (dispatch: Dispatch<AppRootStateActionT
     authAPI.authMe()
         .then((response) => {
             if (response.data.resultCode === 0) {
-                 dispatch(setAppInitializedAC(true))
                 dispatch(isLoginInChangeAC(true))
-                
-                dispatch(setAppStatusAC('succeeded'))
             } else {
-                handleServerAppError(response.data, dispatch);
+              handleServerAppError(response.data, dispatch);
             }
-           
+            dispatch(setAppInitializedAC(true))
         })
         .catch((error) => {
             handleServerNetworkError(error, dispatch);
         })
 }
+
+
 
 //type
 export type SetAppErrorActionType = ReturnType<typeof setAppErrorAC>
@@ -78,6 +78,4 @@ export type InitialStateType = {
     isInitialized: boolean
 }
 
-function isLoginInChangeAC(arg0: boolean): any {
-    throw new Error("Function not implemented.")
-}
+
