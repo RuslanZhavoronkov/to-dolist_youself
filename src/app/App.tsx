@@ -23,6 +23,7 @@ function App() {
 const status = useAppSelector<RequestStatusType>(state => state.app.status)
     return (
         <div className="App">
+             <CustomizedSnackbars/>
             <AppBar position="static">
                 <Toolbar>
                     <IconButton edge="start" color="inherit" aria-label="menu">
@@ -36,7 +37,7 @@ const status = useAppSelector<RequestStatusType>(state => state.app.status)
             </AppBar>
             {status === 'loading' && <LinearProgress color="secondary" />}
             <Container fixed>
-            <CustomizedSnackbars/>
+           
                 <TodolistsList/>
             </Container>
         </div>
