@@ -2,6 +2,7 @@ import {
   AddTodolistActionType,
   RemoveTodolistActionType,
   SetTodolistsActionType,
+  setTodolistEntityStatusAC,
 } from "./todolists-reducer";
 import {
   TaskPriorities,
@@ -13,6 +14,7 @@ import {
 import { Dispatch } from "redux";
 import { AppRootActionsType, AppRootStateType } from "../../app/store";
 import { setErrorAC, setStatusAC } from "../../app/app-reducer";
+import { handleServerAppError, handleServerNetworkError } from "../../utils/error-utils";
 
 const initialState: TasksStateType = {};
 
@@ -91,30 +93,35 @@ export const removeTaskTC =
   (taskId: string, todolistId: string) =>
   (dispatch: Dispatch<AppRootActionsType>) => {
     dispatch(setStatusAC("loading"));
-    todolistsAPI.deleteTask(todolistId, taskId).then((res) => {
+    todolistsAPI.deleteTask(todolistId, taskId)
+    .then((res) => {
       const action = removeTaskAC(taskId, todolistId);
       dispatch(action);
       dispatch(setStatusAC("succeeded"));
-    });
+    })
+    .catch (error => {
+      dispatch(setErrorAC(error.message)) 
+      dispatch(setStatusAC('failed')) //уберем крутилку
+    })
   };
 export const addTaskTC =
   (title: string, todolistId: string) =>
   (dispatch: Dispatch<AppRootActionsType>) => {
     dispatch(setStatusAC("loading"));
-    todolistsAPI.createTask(todolistId, title).then((res) => {
+    todolistsAPI.createTask(todolistId, title)
+    .then((res) => {
       if (res.data.resultCode === 0) {
         const task = res.data.data.item;
         dispatch(addTaskAC(task));
         dispatch(setStatusAC("succeeded"));
       } else {
-        if (res.data.messages) {
-          dispatch(setErrorAC(res.data.messages[0]));
-        } else {
-          dispatch(setErrorAC("call 911"));
-        }
-        dispatch(setStatusAC("failed"));
+        handleServerAppError<{item: TaskType}>(dispatch, res.data)
       }
-    });
+    })
+    .catch (error => {
+      //утилитная функция (задиспатчить ошибку приложения и выключить крутилку)
+      handleServerNetworkError(dispatch, error) 
+    })
   };
 export const updateTaskTC =
   (
@@ -145,12 +152,28 @@ export const updateTaskTC =
       ...domainModel,
     };
 
-    todolistsAPI.updateTask(todolistId, taskId, apiModel).then((res) => {
-      const action = updateTaskAC(taskId, domainModel, todolistId);
+    todolistsAPI.updateTask(todolistId, taskId, apiModel)
+    .then((res) => {
+      if(res.data.resultCode === RESULT_CODE.SUCCEEDED) {
+        const action = updateTaskAC(taskId, domainModel, todolistId);
       dispatch(action);
       dispatch(setStatusAC("succeeded"));
-    });
+      } else {
+        if (res.data.messages) {
+          dispatch(setErrorAC(res.data.messages[0]));
+        } else {
+          dispatch(setErrorAC("call 911"));
+        }
+        dispatch(setStatusAC("failed"));
+      }
+      
+    })
+    .catch (error => {
+      //утилитная функция (задиспатчить ошибку приложения и выключить крутилку)
+      handleServerNetworkError(dispatch, error) 
+    })
   };
+
 
 // types
 export type UpdateDomainTaskModelType = {
@@ -172,3 +195,13 @@ export type TaskActionsType =
   | RemoveTodolistActionType
   | SetTodolistsActionType
   | ReturnType<typeof setTasksAC>;
+
+
+//enum 
+enum RESULT_CODE {
+  SUCCEEDED = 0,
+  FAILED = 1,
+  RECAPTCHA_FAILED = 2
+}
+
+
