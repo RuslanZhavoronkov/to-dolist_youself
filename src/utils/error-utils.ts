@@ -1,27 +1,17 @@
-import { Dispatch } from "redux"
-import { SetErrorType, SetStatusType, setErrorAC, setStatusAC } from "../app/app-reducer"
-import { ResponseType } from "../api/todolists-api"
+import {setAppErrorAC, SetAppErrorActionType, setAppStatusAC, SetAppStatusActionType} from '../app/app-reducer'
+import {ResponseType} from '../api/todolists-api'
+import {Dispatch} from 'redux'
 
-
-//Утилитная функция, которая ловит клиентские ошибки
-export const handleServerAppError = <D>( 
-    dispatch: ErrorUtilsDispatchType, 
-    data: ResponseType<D>
-    ) => {
-    if (data.messages) {
-        dispatch(setErrorAC(data.messages[0]));
-      } else {
-        dispatch(setErrorAC("call 911"));
-      }
-      dispatch(setStatusAC("failed"));
+export const handleServerAppError = <D>(data: ResponseType<D>, dispatch: Dispatch<SetAppErrorActionType | SetAppStatusActionType>) => {
+    if (data.messages.length) {
+        dispatch(setAppErrorAC(data.messages[0]))
+    } else {
+        dispatch(setAppErrorAC('Some error occurred'))
+    }
+    dispatch(setAppStatusAC('failed'))
 }
 
-
-
-//Утилитная функция, которая ловит ошибки сервера
-export const handleServerNetworkError = (dispatch: ErrorUtilsDispatchType, error:{message: string}) => {
-    dispatch(setErrorAC(error.message)) 
-    dispatch(setStatusAC('failed')) //уберем крутилку
+export const handleServerNetworkError = (error: { message: string }, dispatch: Dispatch<SetAppErrorActionType | SetAppStatusActionType>) => {
+    dispatch(setAppErrorAC(error.message ? error.message : 'Some error occurred'))
+    dispatch(setAppStatusAC('failed'))
 }
-
-type ErrorUtilsDispatchType = Dispatch<SetStatusType | SetErrorType>
