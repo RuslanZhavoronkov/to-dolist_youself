@@ -24,6 +24,9 @@ export const TodolistsList: React.FC = () => {
     const dispatch = useAppDispatch()
     const isLoggedIn = useAppSelector(state => state.auth.isLoggedIn)
     useEffect(() => {
+        if (!isLoggedIn) { //if user not auth - not doing request for todolists
+            return
+        }
         const thunk = fetchTodolistsTC()
         dispatch(thunk)
     }, [])

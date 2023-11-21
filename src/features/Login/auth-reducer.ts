@@ -1,5 +1,5 @@
 import { Dispatch } from 'redux'
-import { SetAppErrorActionType, setAppStatusAC, SetAppStatusActionType } from '../../app/app-reducer'
+import { SetAppErrorActionType, setAppIsInitialized, SetAppIsInitializedType, setAppStatusAC, SetAppStatusActionType } from '../../app/app-reducer'
 import { authAPI } from '../../api/todolists-api'
 import { handleServerAppError, handleServerNetworkError } from '../../utils/error-utils'
 import { LoginDataType } from './Login'
@@ -14,6 +14,7 @@ export const authReducer = (state: InitialStateType = initialState, action: Acti
         case 'login/SET-IS-LOGGED-IN':
             //debugger
             return {...state, isLoggedIn: action.value}
+   
         default:
             return state
     }
@@ -23,6 +24,26 @@ export const setIsLoggedInAC = (value: boolean) =>
     ({type: 'login/SET-IS-LOGGED-IN', value} as const)
 
 // thunks
+
+export const meTC = () => async(dispatch:Dispatch<ActionsType>) => {
+    dispatch(setAppStatusAC('loading'))
+    try {
+const response = await authAPI.me()
+if(response.data.resultCode === 0) {
+    dispatch(setIsLoggedInAC(true))
+    dispatch(setAppStatusAC('succeeded'))
+}else {
+    handleServerAppError(response.data, dispatch);
+}
+    }
+    catch(e) {
+        handleServerNetworkError(e as {message: string}, dispatch);
+    }
+    finally{
+        dispatch(setAppIsInitialized(true)) //в любом случае убрать крутилку после после проверки куки
+    }
+}
+
 export const loginTC = (data: LoginDataType) => async(dispatch: Dispatch<ActionsType>) => {
     dispatch(setAppStatusAC('loading'))
 //     authAPI.login(data)
@@ -46,5 +67,10 @@ catch (e) {
     
 
 
+
+
 // types
-type ActionsType = ReturnType<typeof setIsLoggedInAC> | SetAppStatusActionType | SetAppErrorActionType
+type ActionsType = ReturnType<typeof setIsLoggedInAC>
+| SetAppStatusActionType
+| SetAppErrorActionType
+| SetAppIsInitializedType
