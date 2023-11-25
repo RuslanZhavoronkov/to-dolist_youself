@@ -1,13 +1,5 @@
-import { RequestStatusType, appActions, appReducer } from "./app-reducer"
+import { InitialStateType, RequestStatusType, appActions, appReducer } from "./app-reducer"
 
-export type InitialStateType = {
-  // происходит ли сейчас взаимодействие с сервером
-  status: RequestStatusType
-  // если ошибка какая-то глобальная произойдёт - мы запишем текст ошибки сюда
-  error: string | null
-  // true когда приложение проинициализировалось (проверили юзера, настройки получили и т.д.)
-  isInitialized: boolean
-}
 
 let startState: InitialStateType
 
