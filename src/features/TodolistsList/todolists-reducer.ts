@@ -87,10 +87,11 @@ export const removeTodolistTC = (todolistId: string):AppThunk => {
 export const addTodolistTC = (title: string):AppThunk => {
   return (dispatch) => {
    // dispatch(setAppStatusAC("loading"))
-   dispatch(appActions.setAppStatus({status}))
+   dispatch(appActions.setAppStatus({status:"loading"}))
     todolistsAPI.createTodolist(title).then((res) => {
       dispatch(addTodolistAC(res.data.data.item))
-      dispatch(setAppStatusAC("succeeded"))
+     // dispatch(setAppStatusAC("succeeded"))
+     dispatch(appActions.setAppStatus({status:"succeeded"}))
     })
   }
 }
@@ -118,4 +119,4 @@ export type TodolistDomainType = TodolistType & {
   filter: FilterValuesType
   entityStatus: RequestStatusType
 }
-type ThunkDispatch = Dispatch<ActionsType | SetAppStatusActionType | SetAppErrorActionType>
+//type ThunkDispatch = Dispatch<ActionsType | SetAppStatusActionType | SetAppErrorActionType>
