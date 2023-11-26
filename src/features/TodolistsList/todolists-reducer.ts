@@ -19,8 +19,8 @@ const slice = createSlice({
       }
     },
     addTodolist: (state, action: PayloadAction<{ todolist: TodolistType }>) => {
-     // return [{ ...action.payload.todolist, filter: "all", entityStatus: "idle" }, ...state]
-     state.unshift({...action.payload.todolist, filter: "all", entityStatus: "idle" })
+      // return [{ ...action.payload.todolist, filter: "all", entityStatus: "idle" }, ...state]
+      state.unshift({ ...action.payload.todolist, filter: "all", entityStatus: "idle" })
     },
     changeTodolistTitle: (state, action: PayloadAction<{ id: string; title: string }>) => {
       //return state.map((tl) => (tl.id === action.payload.id ? { ...tl, title: action.payload.title } : tl))
@@ -29,31 +29,30 @@ const slice = createSlice({
       // const index = state.findIndex(todo => todo.id === action.payload.id)
       // if (index !== -1){
       //   state[index].title = action.payload.title
-      // } 
-       //2 var
-      const todolist  = state.find(todo => todo.id === action.payload.id)
+      // }
+      //2 var
+      const todolist = state.find((todo) => todo.id === action.payload.id)
       if (todolist) {
-         todolist.title = action.payload.title
+        todolist.title = action.payload.title
       }
-     
     },
     changeTodolistFilter: (state, action: PayloadAction<{ id: string; filter: FilterValuesType }>) => {
       //return state.map((tl) => (tl.id === action.payload.id ? { ...tl, filter: action.payload.filter } : tl))
-      const index = state.findIndex(todo => todo.id === action.payload.id)
+      const index = state.findIndex((todo) => todo.id === action.payload.id)
       if (index !== -1) {
         state[index].filter = action.payload.filter
       }
     },
     changeTodolistEntityStatus: (state, action: PayloadAction<{ id: string; entityStatus: RequestStatusType }>) => {
       //return state.map((tl) => (tl.id === action.payload.id ? { ...tl, entityStatus: action.payload.status } : tl))
-      const index = state.findIndex(todo => todo.id === action.payload.id)
-      if(index !== -1) {
-         state[index].entityStatus = action.payload.entityStatus
+      const index = state.findIndex((todo) => todo.id === action.payload.id)
+      if (index !== -1) {
+        state[index].entityStatus = action.payload.entityStatus
       }
     },
     setTodolists: (state, action: PayloadAction<{ todolists: Array<TodolistType> }>) => {
-     // return action.payload.todolists.map((tl) => ({ ...tl, filter: "all", entityStatus: "idle" }))
-return action.payload.todolists.map(tl =>({...tl, filter: "all", entityStatus: "idle" }) )
+      // return action.payload.todolists.map((tl) => ({ ...tl, filter: "all", entityStatus: "idle" }))
+      return action.payload.todolists.map((tl) => ({ ...tl, filter: "all", entityStatus: "idle" }))
     },
   },
 })
@@ -123,17 +122,17 @@ export const fetchTodolistsTC = (): AppThunk => {
       })
   }
 }
-export const removeTodolistTC = (todolistId: string): AppThunk => {
+export const removeTodolistTC = (id: string): AppThunk => {
   return (dispatch) => {
     //изменим глобальный статус приложения, чтобы вверху полоса побежала
     // dispatch(setAppStatusAC("loading"))
     dispatch(appActions.setAppStatus({ status: "loading" }))
     //изменим статус конкретного тудулиста, чтобы он мог задизеблить что надо
     // dispatch(changeTodolistEntityStatusAC(todolistId, "loading"))
-    dispatch(todolistsActions.changeTodolistEntityStatus({ id: todolistId, entityStatus: "loading" }))
-    todolistsAPI.deleteTodolist(todolistId).then((res) => {
+    dispatch(todolistsActions.changeTodolistEntityStatus({ id, entityStatus: "loading" }))
+    todolistsAPI.deleteTodolist(id).then((res) => {
       // dispatch(removeTodolistAC(todolistId))
-      dispatch(todolistsActions.removeTodolist({ id: todolistId }))
+      dispatch(todolistsActions.removeTodolist({ id }))
       //скажем глобально приложению, что асинхронная операция завершена
       //dispatch(setAppStatusAC("succeeded"))
       dispatch(appActions.setAppStatus({ status: "succeeded" }))
