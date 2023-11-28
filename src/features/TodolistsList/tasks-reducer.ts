@@ -4,6 +4,7 @@ import { AppRootStateType, AppThunk } from "../../app/store"
 import { handleServerAppError, handleServerNetworkError } from "../../utils/error-utils"
 import { appActions } from "app/app-reducer"
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
+import { todolistsActions } from "./todolists-reducer"
 
 const initialState: TasksStateType = {}
 
@@ -23,20 +24,47 @@ const slice = createSlice({
       //   ...state,
       //   [action.payload.task.todoListId]: [action.payload.task, ...state[action.payload.task.todoListId]],
       // }
+
+      state[action.payload.task.todoListId].unshift(action.payload.task)
     },
     updateTask: (
       state,
       action: PayloadAction<{ taskId: string; model: UpdateDomainTaskModelType; todolistId: string }>,
     ) => {
-      return {
-        //   ...state,
-        //   [action.payload.todolistId]: state[action.payload.todolistId].map((t) =>
-        //     t.id === action.payload.taskId ? { ...t, ...action.payload.model } : t,
-        //   ),
+      // return {
+      //   //   ...state,
+      //   //   [action.payload.todolistId]: state[action.payload.todolistId].map((t) =>
+      //   //     t.id === action.payload.taskId ? { ...t, ...action.payload.model } : t,
+      //   //   ),
+      // }
+      const taskIndex = state[action.payload.todolistId].findIndex(task => task.id === action.payload.taskId)
+      if (taskIndex !== -1) {
+        state[action.payload.todolistId][taskIndex] = {...state[action.payload.todolistId][taskIndex], ...action.payload.model}
       }
     },
-    setTasks: (state, action: PayloadAction<{ tasks: Array<TaskType>; todolistId: string }>) => {},
+    setTasks: (state, action: PayloadAction<{ tasks: Array<TaskType>; todolistId: string }>) => {
+      //return { ...state, [action.payload.todolistId]: action.payload.tasks }
+      //state[action.payload.todolistId].unshift(action.payload.tasks)
+    },
   },
+  extraReducers: (bilder) => {
+bilder
+.addCase(todolistsActions.addTodolist, (state, action)=>{
+ // return { ...state, [action.payload.todolist.id]: [] }
+ state[action.payload.todolist.id]=[] 
+})
+.addCase(todolistsActions.removeTodolist, (state, action) => {
+  // const copyState = { ...state }
+  //     delete copyState[action.id]
+  //     return copyState
+  delete state[action.payload.id]
+})
+.addCase(todolistsActions.setTodolists, (state, action) => {
+  action.payload.todolists.forEach(todo => )
+})
+  }
+
+  
 })
 
 export const _tasksReducer = (state: TasksStateType = initialState, action: ActionsType): TasksStateType => {
