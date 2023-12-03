@@ -1,10 +1,11 @@
 import { TaskPriorities, TaskStatuses, TaskType, todolistsAPI, UpdateTaskModelType } from "api/todolists-api"
-import { AppThunk } from "app/store"
+import { AppDispatch, AppRootStateType, AppThunk } from "app/store"
 import { handleServerAppError, handleServerNetworkError } from "utils/error-utils"
 import { appActions } from "app/app.reducer"
 import { todolistsActions } from "features/TodolistsList/todolists.reducer"
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
+import { createAsyncThunk, createSlice, Dispatch, PayloadAction } from "@reduxjs/toolkit"
 import { clearTasksAndTodolists } from "common/actions/common.actions"
+import {createAppAsyncThunk} from "../../utils/createAppAsyncThunk"
 
 const initialState: TasksStateType = {}
 
@@ -62,23 +63,29 @@ const slice = createSlice({
 })
 
 // thunks
-const fetchTasks = createAsyncThunk<{ tasks: TaskType[]; todolistId: string }, string>(
-  `${slice.name}/fetchTasks`,
-  async (todolistId, thunkAPI) => {
-    const { dispatch, rejectWithValue } = thunkAPI
-    try {
-      dispatch(appActions.setAppStatus({ status: "loading" }))
-      const response = await todolistsAPI.getTasks(todolistId)
-      // const tasks = response.data.items;
-      // dispatch(tasksActions.setTasks({ tasks, todolistId }));
-      dispatch(appActions.setAppStatus({ status: "succeeded" }))
-      return { tasks: response.data.items, todolistId } //теперь для изм.state dispatch(AC) не нужно
-    } catch (error: any) {
-      handleServerNetworkError(error, dispatch)
-      return rejectWithValue(null)
-    }
+const fetchTasks = createAppAsyncThunk <
+  { tasks: TaskType[]; todolistId: string },
+  string
+  // { 
+  //   state: AppRootStateType,
+  //   dispatch: AppDispatch,
+  //   rejectValue: null 
+  // }
+>
+(`${slice.name}/fetchTasks`, async (todolistId, thunkAPI) => {
+  const { dispatch, rejectWithValue } = thunkAPI
+  try {
+    dispatch(appActions.setAppStatus({ status: "loading" }))
+    const response = await todolistsAPI.getTasks(todolistId)
+    // const tasks = response.data.items;
+    // dispatch(tasksActions.setTasks({ tasks, todolistId }));
+    dispatch(appActions.setAppStatus({ status: "succeeded" }))
+    return { tasks: response.data.items, todolistId } //теперь для изм.state dispatch(AC) не нужно
+  } catch (error: any) {
+    handleServerNetworkError(error, dispatch)
+    return rejectWithValue(null)
   }
-)
+})
 
 // export const _fetchTasksTC =
 //   (todolistId: string): AppThunk =>
@@ -176,3 +183,4 @@ export const taskThunks = {
   //упаковываем санки в объект
   fetchTasks,
 }
+
