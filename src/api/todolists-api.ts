@@ -1,4 +1,5 @@
 import axios from "axios";
+import { UpdateDomainTaskModelType } from "features/TodolistsList/tasks.reducer";
 
 const settings = {
   withCredentials: true,
@@ -42,6 +43,14 @@ export const todolistsAPI = {
     return instance.put<ResponseType<TaskType>>(`todo-lists/${todolistId}/tasks/${taskId}`, model);
   },
 };
+
+
+export type ArgUpdateTaskType =  {
+  taskId:string,
+  domainModel:UpdateDomainTaskModelType,
+  todolistId: string
+} 
+
 
 export type LoginParamsType = {
   email: string;
