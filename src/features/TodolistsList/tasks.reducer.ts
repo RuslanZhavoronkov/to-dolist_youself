@@ -1,11 +1,12 @@
 import { ArgUpdateTaskType, TaskPriorities, TaskStatuses, TaskType, todolistsAPI, UpdateTaskModelType } from "api/todolists-api"
 import { AppDispatch, AppRootStateType, AppThunk } from "app/store"
-import { handleServerAppError, handleServerNetworkError } from "utils/error-utils"
+import { handleServerNetworkError } from "utils/handleServerNetworkError"
 import { appActions } from "app/app.reducer"
 import { todolistsActions } from "features/TodolistsList/todolists.reducer"
 import { createAsyncThunk, createSlice, Dispatch, PayloadAction } from "@reduxjs/toolkit"
 import { clearTasksAndTodolists } from "common/actions/common.actions"
 import { createAppAsyncThunk } from "../../utils/createAppAsyncThunk"
+import { handleServerAppError } from "utils/handleServerAppError"
 
 const initialState: TasksStateType = {}
 
@@ -168,7 +169,7 @@ const updateTask = createAppAsyncThunk<ArgUpdateTaskType, ArgUpdateTaskType>(
     const { dispatch, rejectWithValue, getState } = thunkAPI
     try {
       const state = getState()
-      const task = state.tasks[arg.todolistId].find((t) => t.id === arg.taskId)
+      const task = state.tasks[arg.todolistId].find((t) => t.id === arg.taskId) // in state find task
       if (!task) {
         //throw new Error("task not found in the state");
         console.warn("task not found in the state")

@@ -144,7 +144,7 @@ test("title of specified task should be changed", () => {
     todolistId: "todolistId2",
   }
  // const action = tasksActions.updateTask({ taskId: "2", model: { title: "yogurt" }, todolistId: "todolistId2" });
-const action = taskThunks.updateTask()
+const action = taskThunks.updateTask.fulfilled(payload, 'requestId', payload)
   const endState = tasksReducer(startState, action);
 
   expect(endState["todolistId1"][1].title).toBe("JS");
