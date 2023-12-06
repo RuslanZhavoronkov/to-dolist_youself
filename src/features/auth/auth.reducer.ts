@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { AppThunk } from "app/store"
 import { appActions } from "app/app.reducer"
 import { clearTasksAndTodolists } from "common/actions/common.actions"
-import { handleServerAppError, handleServerNetworkError } from "utils"
+import { handleServerAppError, handleServerNetworkError } from "common/utils"
 
 // import {  handleServerNetworkError } from "utils/handleServerNetworkError"
 // import { handleServerAppError } from "utils/handleServerAppError"
