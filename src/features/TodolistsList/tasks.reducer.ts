@@ -1,7 +1,7 @@
 import { AppDispatch, AppRootStateType, AppThunk } from "app/store"
 import { handleServerNetworkError } from "common/utils/handleServerNetworkError"
 import { appActions } from "app/app.reducer"
-import { todolistsActions } from "features/TodolistsList/todolists.reducer"
+import { todolistThunks, todolistsActions } from "features/TodolistsList/todolists.reducer"
 import { createAsyncThunk, createSlice, Dispatch, PayloadAction } from "@reduxjs/toolkit"
 import { clearTasksAndTodolists } from "common/actions/common.actions"
 import { createAppAsyncThunk } from "../../common/utils/createAppAsyncThunk"
@@ -66,10 +66,12 @@ const slice = createSlice({
       .addCase(todolistsActions.addTodolist, (state, action) => {
         state[action.payload.todolist.id] = []
       })
-      .addCase(todolistsActions.removeTodolist, (state, action) => {
+      //.addCase(todolistsActions.removeTodolist, (state, action) => {
+      .addCase(todolistThunks.removeTodolist.fulfilled, (state, action) => {
         delete state[action.payload.id]
       })
-      .addCase(todolistsActions.setTodolists, (state, action) => {
+      //.addCase(todolistsActions.setTodolists, (state, action) => {
+      .addCase(todolistThunks.fetchTodolists.fulfilled, (state, action) => {
         action.payload.todolists.forEach((tl) => {
           state[tl.id] = []
         })
