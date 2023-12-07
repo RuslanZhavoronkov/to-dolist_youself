@@ -43,7 +43,9 @@ test("correct todolist should be added", () => {
     order: 0,
   }
 
-  const endState = todolistsReducer(startState, todolistsActions.addTodolist({ todolist }))
+  //const endState = todolistsReducer(startState, todolistsActions.addTodolist({ todolist }))
+  const action = todolistThunks.addTodolist.fulfilled({todolist}, 'requestId', todolist.title)
+  const endState = todolistsReducer(startState, action)
 
   expect(endState.length).toBe(3)
   expect(endState[0].title).toBe(todolist.title)
@@ -53,7 +55,13 @@ test("correct todolist should be added", () => {
 test("correct todolist should change its name", () => {
   let newTodolistTitle = "New Todolist"
 
-  const action = todolistsActions.changeTodolistTitle({ id: todolistId2, title: newTodolistTitle })
+  //const action = todolistsActions.changeTodolistTitle({ id: todolistId2, title: newTodolistTitle })
+  const payload = { id: todolistId2, title: newTodolistTitle }
+  const action = todolistThunks.changeTodolistTitle.fulfilled(
+    payload,
+    'requestId',
+    payload
+    )
 
   const endState = todolistsReducer(startState, action)
 

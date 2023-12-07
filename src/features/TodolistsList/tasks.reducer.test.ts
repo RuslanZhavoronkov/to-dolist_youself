@@ -165,15 +165,16 @@ test("title of specified task should be changed", () => {
 })
 
 test("new array should be added when new todolist is added", () => {
-  const action = todolistsActions.addTodolist({
-    todolist: {
-      id: "blabla",
-      title: "new todolist",
-      order: 0,
-      addedDate: "",
-    },
-  })
-
+  //const action = todolistsActions.addTodolist({
+    const payload = {
+      todolist: {
+        id: "blabla",
+        title: "new todolist",
+        order: 0,
+        addedDate: "",
+      },
+    }
+  const action = todolistThunks.addTodolist.fulfilled(payload, 'requestId', payload.todolist.title)
   const endState = tasksReducer(startState, action)
 
   const keys = Object.keys(endState)
@@ -196,7 +197,6 @@ test("propertry with todolistId should be deleted", () => {
     )
 
   const endState = tasksReducer(startState, action)
-
   const keys = Object.keys(endState)
 
   expect(keys.length).toBe(1)

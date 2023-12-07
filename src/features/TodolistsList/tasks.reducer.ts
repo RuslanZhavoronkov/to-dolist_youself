@@ -63,7 +63,8 @@ const slice = createSlice({
           tasks[index] = { ...tasks[index], ...action.payload.domainModel }
         }
       })
-      .addCase(todolistsActions.addTodolist, (state, action) => {
+      //.addCase(todolistsActions.addTodolist, (state, action) => {
+      .addCase(todolistThunks.addTodolist.fulfilled, (state, action) => {
         state[action.payload.todolist.id] = []
       })
       //.addCase(todolistsActions.removeTodolist, (state, action) => {
