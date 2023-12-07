@@ -3,12 +3,12 @@ import { useSelector } from "react-redux"
 import {
   addTodolistTC,
   changeTodolistTitleTC,
-  fetchTodolistsTC,
   FilterValuesType,
   removeTodolistTC,
   todolistsActions,
+  todolistThunks,
 } from "features/TodolistsList/todolists.reducer"
-import { removeTaskTC, taskThunks } from "features/TodolistsList/tasks.reducer"
+import { taskThunks } from "features/TodolistsList/tasks.reducer"
 import { Grid, Paper } from "@mui/material"
 import { Navigate } from "react-router-dom"
 import { selectIsLoggedIn } from "features/auth/auth.selectors"
@@ -34,7 +34,8 @@ export const TodolistsList: React.FC<PropsType> = ({ demo = false }) => {
     if (demo || !isLoggedIn) {
       return
     }
-    const thunk = fetchTodolistsTC()
+    //const thunk = fetchTodolistsTC()
+    const thunk = todolistThunks.fetchTodolists()
     dispatch(thunk)
   }, [])
 
