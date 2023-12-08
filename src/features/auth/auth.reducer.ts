@@ -3,7 +3,7 @@ import { AppThunk } from "app/store";
 import { appActions } from "app/app.reducer";
 import { authAPI, LoginParamsType } from "features/auth/auth.api";
 import { clearTasksAndTodolists } from "common/actions";
-import { handleServerAppError, handleServerNetworkError } from "common/utils";
+import { createAppAsyncThunk, handleServerAppError, handleServerNetworkError } from "common/utils";
 
 const slice = createSlice({
   name: "auth",
@@ -23,11 +23,14 @@ const slice = createSlice({
     .addCase(logout.fulfilled, (state, action) => {
       state.isLoggedIn = action.payload.isLoggedIn;
     })
+    .addCase(initializeApp.fulfilled, (state, action) => {
+      state.isLoggedIn = action.payload.isLoggedIn;
+    })
   }
 });
 
 // thunks
-const login = createAsyncThunk<{ isLoggedIn: boolean }, LoginParamsType>(`${slice.name}/login`, async (arg, thunkAPI) => {
+const login = createAppAsyncThunk<{ isLoggedIn: boolean }, LoginParamsType>(`${slice.name}/login`, async (arg, thunkAPI) => {
   const { dispatch, rejectWithValue } = thunkAPI;
   try {
     dispatch(appActions.setAppStatus({ status: "loading" }));
@@ -45,7 +48,7 @@ const login = createAsyncThunk<{ isLoggedIn: boolean }, LoginParamsType>(`${slic
   }
 });
 
-const logout = createAsyncThunk
+const logout = createAppAsyncThunk
 <{ isLoggedIn: boolean }, undefined> //undefined так как в санку не приходят аргументы
 (`${slice.name}/logout`, async(arg, thunkAPI) => {
   const {dispatch, rejectWithValue} = thunkAPI
@@ -66,6 +69,31 @@ const logout = createAsyncThunk
     return rejectWithValue(null);
   }
 })
+
+
+const initializeApp = createAppAsyncThunk
+<{ isLoggedIn: true }, undefined>
+(`${slice.name}/initializeApp`,
+ async (arg, thunkAPI) => {
+  const { dispatch, rejectWithValue } = thunkAPI;
+  try {
+    const response = await authAPI.me();
+    if (response.data.resultCode === 0) {
+      return { isLoggedIn: true };
+      
+    } else {
+      handleServerAppError(response.data, dispatch);
+      return rejectWithValue(null);
+    }
+    
+  } catch (e) {
+    handleServerNetworkError(e, dispatch);
+    return rejectWithValue(null);
+  }
+  finally {
+    dispatch(appActions.setAppInitialized({ isInitialized: true }))
+  }
+});
 
 // export const _logoutTC = (): AppThunk => (dispatch) => {
 //   dispatch(appActions.setAppStatus({ status: "loading" }));
@@ -114,5 +142,6 @@ export const authActions = slice.actions;
 
 export const authThunks = {
   login,
-  logout
+  logout,
+  initializeApp
 };

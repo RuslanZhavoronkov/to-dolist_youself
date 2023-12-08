@@ -17,6 +17,7 @@ const slice = createSlice({
   name: "app",
   initialState,
   reducers: {
+    // для изменения локального state без санок так и остануться подредьюсеры
     setAppError: (state, action: PayloadAction<{ error: string | null }>) => {
       state.error = action.payload.error;
     },
@@ -27,23 +28,10 @@ const slice = createSlice({
       state.isInitialized = action.payload.isInitialized;
     },
   },
+  
 });
 
-const initializeApp = createAppAsyncThunk<any, any>(`${slice.name}/initializeApp`, async (arg, thunkAPI) => {
-  const { dispatch, rejectWithValue } = thunkAPI;
-  try {
-    const response = await authAPI.me();
-    if (response.data.resultCode === 0) {
-      dispatch(authActions.setIsLoggedIn({ isLoggedIn: true }));
-    } else {
-      handleServerAppError(response.data, dispatch);
-      return rejectWithValue(null);
-    }
-  } catch (e) {
-    handleServerNetworkError(e, dispatch);
-    return rejectWithValue(null);
-  }
-});
+
 
 // export const initializeAppTC = () => (dispatch: Dispatch) => {
 //   authAPI.me().then((res) => {
@@ -57,8 +45,6 @@ const initializeApp = createAppAsyncThunk<any, any>(`${slice.name}/initializeApp
 //   });
 // };
 
-export const appThunks = {
-  initializeApp,
-};
+
 export const appReducer = slice.reducer;
 export const appActions = slice.actions;
