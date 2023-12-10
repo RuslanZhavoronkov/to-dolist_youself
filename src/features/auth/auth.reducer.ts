@@ -40,7 +40,7 @@ const login = createAppAsyncThunk<{ isLoggedIn: boolean }, LoginParamsType>(`${s
       return { isLoggedIn: true };
     } else {
       handleServerAppError(response.data, dispatch);
-      return rejectWithValue(null);
+      return rejectWithValue(response.data);
     }
   } catch (error) {
     handleServerNetworkError(error, dispatch);
@@ -82,7 +82,7 @@ const initializeApp = createAppAsyncThunk
       return { isLoggedIn: true };
       
     } else {
-      handleServerAppError(response.data, dispatch);
+      //handleServerAppError(response.data, dispatch);
       return rejectWithValue(null);
     }
     
