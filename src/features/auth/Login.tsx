@@ -42,14 +42,13 @@ export const Login = () => {
       dispatch(authThunks.login(values))
         .unwrap() //разворачивать(тогда в зене обрабатываем +, а в кэтч -)
         .then((response) => {
-          //debugger;
+          //;
         })
         .catch((error: BaseResponseType) => {
-          //debugger;
-            error.fieldsErrors?.forEach((fieldError) => {
-              return formikHelpers.setFieldError(fieldError.field, fieldError.error);
-            });
-        
+          //;
+          error.fieldsErrors?.forEach((fieldError) => {
+            return formikHelpers.setFieldError(fieldError.field, fieldError.error);
+          });
 
           // if(error.fieldsErrors.length) {
           //   for (let i = 0; i < error.fieldsErrors.length; i++) {

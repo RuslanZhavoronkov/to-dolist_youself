@@ -52,32 +52,22 @@ const _addTask = createAppAsyncThunk<{ task: TaskType }, AddTaskArgType>("tasks/
 
 const addTask = createAppAsyncThunk<{ task: TaskType }, AddTaskArgType>("tasks/addTask", async (arg, thunkAPI) => {
   const { dispatch, rejectWithValue } = thunkAPI;
-  debugger
-  return thunkTryCatch(thunkAPI, async()=> {
-    debugger 
-    //возвращает 
+
+  return thunkTryCatch(thunkAPI, async () => {
+    //возвращает
     //Убрали дублирование кода: catch и крутилки
-   // dispatch(appActions.setAppStatus({ status: "loading" }));
+    // dispatch(appActions.setAppStatus({ status: "loading" }));
     const res = await todolistsApi.createTask(arg);
     if (res.data.resultCode === ResultCode.Success) {
-      debugger
       const task = res.data.data.item;
-    // dispatch(appActions.setAppStatus({ status: "succeeded" }));
+      // dispatch(appActions.setAppStatus({ status: "succeeded" }));
       return { task };
     } else {
-      debugger
       handleServerAppError(res.data, dispatch);
       return rejectWithValue(null);
     }
-  })
+  });
 });
-
-
-
-
-
-
-
 
 const updateTask = createAppAsyncThunk<UpdateTaskArgType, UpdateTaskArgType>(
   "tasks/updateTask",

@@ -42,13 +42,13 @@ const login = createAppAsyncThunk<{ isLoggedIn: boolean }, LoginParamsType>(
         dispatch(appActions.setAppStatus({ status: "succeeded" }));
         return { isLoggedIn: true };
       } else {
-       // debugger
-         // ❗ Если у нас fieldsErrors есть значит мы будем отображать эти ошибки
+        //
+        // ❗ Если у нас fieldsErrors есть значит мы будем отображать эти ошибки
         // в конкретном поле в компоненте (пункт 7)
         // ❗ Если у нас fieldsErrors нету значит отобразим ошибку глобально
-        const isShowAppError = !response.data.fieldsErrors.length
+        const isShowAppError = !response.data.fieldsErrors.length;
         handleServerAppError(response.data, dispatch, isShowAppError);
-        return rejectWithValue(response.data)
+        return rejectWithValue(response.data);
 
         //  handleServerAppError(response.data, dispatch, false);
         // //dispatch(appActions.setAppStatus({ status: "failed" }));
@@ -108,7 +108,7 @@ const initializeApp = createAppAsyncThunk<{ isLoggedIn: true }, undefined>(
   `${slice.name}/initializeApp`,
   async (arg, thunkAPI) => {
     const { dispatch, rejectWithValue } = thunkAPI;
-    return thunkTryCatch(thunkAPI, async() => {
+    return thunkTryCatch(thunkAPI, async () => {
       const response = await authAPI.me();
       if (response.data.resultCode === 0) {
         dispatch(appActions.setAppInitialized({ isInitialized: true }));
@@ -117,7 +117,7 @@ const initializeApp = createAppAsyncThunk<{ isLoggedIn: true }, undefined>(
         dispatch(appActions.setAppInitialized({ isInitialized: true }));
         return rejectWithValue(null);
       }
-    })
+    });
   },
 );
 

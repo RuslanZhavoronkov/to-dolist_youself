@@ -8,16 +8,12 @@ export const thunkTryCatch = async <T>(
   thunkAPI: BaseThunkAPI<AppRootStateType, unknown, AppDispatch, null | BaseResponseType>,
   logic: () => Promise<T>, //logic - логика санки
 ): Promise<T | ReturnType<typeof thunkAPI.rejectWithValue>> => {
-  debugger
   const { dispatch, rejectWithValue } = thunkAPI;
   dispatch(appActions.setAppStatus({ status: "loading" }));
   try {
-    debugger
     let res = await logic();
-    debugger
     return res;
   } catch (e) {
-    debugger
     handleServerNetworkError(e, dispatch);
     return rejectWithValue(null);
   } finally {
