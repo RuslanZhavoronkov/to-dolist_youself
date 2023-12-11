@@ -9,13 +9,11 @@ import { authThunks } from "./auth.reducer";
 import { error } from "console";
 import { BaseResponseType } from "common/types/common.types";
 
-
-
 type FormValues = {
-  email: string,
-  password: string,
-  rememberMe: boolean
-}
+  email: string;
+  password: string;
+  rememberMe: boolean;
+};
 export const Login = () => {
   const dispatch = useAppDispatch();
 
@@ -39,25 +37,28 @@ export const Login = () => {
       password: "",
       rememberMe: false,
     },
-    onSubmit: (values:FormValues , formikHelpers: FormikHelpers<FormValues> ) => {
-     // dispatch(loginTC(values));
+    onSubmit: (values: FormValues, formikHelpers: FormikHelpers<FormValues>) => {
+      // dispatch(loginTC(values));
       dispatch(authThunks.login(values))
-      .unwrap() //разворачивать(тогда в зене обрабатываем +, а в кэтч -)
-      .then((response)=> {
-debugger
-      })
-      .catch((error:BaseResponseType)=> {
-      error.fieldsErrors.forEach((fieldError) => {
-        return formikHelpers.setFieldError(fieldError.field, fieldError.error)
-      })
-      // if(error.fieldsErrors.length) {
-      //   for (let i = 0; i < error.fieldsErrors.length; i++) {
-      //     formikHelpers.setFieldError(error.fieldsErrors[i].field, error.fieldsErrors[i].error)
-      //   }
-      // }
-      // formikHelpers.setFieldError(error.fieldsErrors[0].field, error.fieldsErrors[0].error)
-      // formikHelpers.setFieldError(error.fieldsErrors[1].field,error.fieldsErrors[1].error)
-      })
+        .unwrap() //разворачивать(тогда в зене обрабатываем +, а в кэтч -)
+        .then((response) => {
+          //debugger;
+        })
+        .catch((error: BaseResponseType) => {
+          //debugger;
+            error.fieldsErrors?.forEach((fieldError) => {
+              return formikHelpers.setFieldError(fieldError.field, fieldError.error);
+            });
+        
+
+          // if(error.fieldsErrors.length) {
+          //   for (let i = 0; i < error.fieldsErrors.length; i++) {
+          //     formikHelpers.setFieldError(error.fieldsErrors[i].field, error.fieldsErrors[i].error)
+          //   }
+          // }
+          // formikHelpers.setFieldError(error.fieldsErrors[0].field, error.fieldsErrors[0].error)
+          // formikHelpers.setFieldError(error.fieldsErrors[1].field,error.fieldsErrors[1].error)
+        });
     },
   });
 
@@ -83,9 +84,9 @@ debugger
             </FormLabel>
             <FormGroup>
               <TextField label="Email" margin="normal" {...formik.getFieldProps("email")} />
-              {formik.errors.email ? <div style = {{color: 'red'}}>{formik.errors.email}</div> : null}
+              {formik.errors.email ? <div style={{ color: "red" }}>{formik.errors.email}</div> : null}
               <TextField type="password" label="Password" margin="normal" {...formik.getFieldProps("password")} />
-              {formik.errors.password ? <div style = {{color: 'red'}}>{formik.errors.password}</div> : null}
+              {formik.errors.password ? <div style={{ color: "red" }}>{formik.errors.password}</div> : null}
               <FormControlLabel
                 label={"Remember me"}
                 control={<Checkbox {...formik.getFieldProps("rememberMe")} checked={formik.values.rememberMe} />}

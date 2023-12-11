@@ -4,6 +4,7 @@ import { appActions } from "app/app.reducer";
 import { authAPI, LoginParamsType } from "features/auth/auth.api";
 import { clearTasksAndTodolists } from "common/actions";
 import { createAppAsyncThunk, handleServerAppError, handleServerNetworkError } from "common/utils";
+import { thunkTryCatch } from "common/utils/thunk-try-catch";
 
 const slice = createSlice({
   name: "auth",
@@ -41,9 +42,17 @@ const login = createAppAsyncThunk<{ isLoggedIn: boolean }, LoginParamsType>(
         dispatch(appActions.setAppStatus({ status: "succeeded" }));
         return { isLoggedIn: true };
       } else {
-         handleServerAppError(response.data, dispatch, false);
-        //dispatch(appActions.setAppStatus({ status: "failed" }));
-        return rejectWithValue(response.data);
+       // debugger
+         // ❗ Если у нас fieldsErrors есть значит мы будем отображать эти ошибки
+        // в конкретном поле в компоненте (пункт 7)
+        // ❗ Если у нас fieldsErrors нету значит отобразим ошибку глобально
+        const isShowAppError = !response.data.fieldsErrors.length
+        handleServerAppError(response.data, dispatch, isShowAppError);
+        return rejectWithValue(response.data)
+
+        //  handleServerAppError(response.data, dispatch, false);
+        // //dispatch(appActions.setAppStatus({ status: "failed" }));
+        // return rejectWithValue(response.data);
       }
     } catch (error) {
       handleServerNetworkError(error, dispatch);
@@ -74,7 +83,7 @@ const logout = createAppAsyncThunk<{ isLoggedIn: boolean }, undefined>( //undefi
   },
 );
 
-const initializeApp = createAppAsyncThunk<{ isLoggedIn: true }, undefined>(
+const _initializeApp = createAppAsyncThunk<{ isLoggedIn: true }, undefined>(
   `${slice.name}/initializeApp`,
   async (arg, thunkAPI) => {
     const { dispatch, rejectWithValue } = thunkAPI;
@@ -92,6 +101,23 @@ const initializeApp = createAppAsyncThunk<{ isLoggedIn: true }, undefined>(
     } finally {
       dispatch(appActions.setAppInitialized({ isInitialized: true }));
     }
+  },
+);
+
+const initializeApp = createAppAsyncThunk<{ isLoggedIn: true }, undefined>(
+  `${slice.name}/initializeApp`,
+  async (arg, thunkAPI) => {
+    const { dispatch, rejectWithValue } = thunkAPI;
+    return thunkTryCatch(thunkAPI, async() => {
+      const response = await authAPI.me();
+      if (response.data.resultCode === 0) {
+        dispatch(appActions.setAppInitialized({ isInitialized: true }));
+        return { isLoggedIn: true };
+      } else {
+        dispatch(appActions.setAppInitialized({ isInitialized: true }));
+        return rejectWithValue(null);
+      }
+    })
   },
 );
 
