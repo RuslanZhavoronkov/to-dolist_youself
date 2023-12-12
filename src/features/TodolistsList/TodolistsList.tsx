@@ -6,8 +6,8 @@ import { Grid, Paper } from "@mui/material";
 import { AddItemForm } from "common/components";
 import { Todolist } from "./Todolist/Todolist";
 import { Navigate } from "react-router-dom";
-import { useActions, useAppDispatch } from "common/hooks";
-import { selectIsLoggedIn } from "features/auth/auth.selectors";
+import { useActions } from "common/hooks";
+import { selectIsLoggedIn } from "features/auth/model/auth.selectors";
 import { selectTasks } from "features/TodolistsList/tasks.selectors";
 import { selectTodolists } from "features/TodolistsList/todolists.selectors";
 import { TaskStatuses } from "common/enums";
@@ -17,68 +17,53 @@ export const TodolistsList = () => {
   const tasks = useSelector(selectTasks);
   const isLoggedIn = useSelector(selectIsLoggedIn);
 
-  //const dispatch = useAppDispatch();
-
   const {
+    removeTodolist: removeTodolistThunk,
+    addTodolist: addTodolistThunk,
     fetchTodolists,
-    removeTodolist,
-    addTodolist,
-    changeTodolistTitle,
-    addTask,
-    removeTask,
-    updateTask,
-    fetchTasks,
-    changeTodolistFilter,
-  } = useActions({ ...todolistsThunks, ...tasksThunks, ...todolistsActions });
-  // const { addTask,removeTask,updateTask,fetchTasks } = useActions(tasksThunks);
-  // const{changeTodolistFilter} = useActions(todolistsActions)
+    changeTodolistTitle: changeTodolistTitleThunk,
+  } = useActions(todolistsThunks);
+
+  const { addTask: addTaskThunk, removeTask: removeTaskThunk, updateTask } = useActions(tasksThunks);
+  const { changeTodolistFilter } = useActions(todolistsActions);
 
   useEffect(() => {
     if (!isLoggedIn) {
       return;
     }
-    //dispatch(todolistsThunks.fetchTodolists());
     fetchTodolists();
   }, []);
 
-  const removeTaskCb = useCallback(function (taskId: string, todolistId: string) {
-    //dispatch(tasksThunks.removeTask({ taskId, todolistId }));
-    removeTask({ taskId, todolistId });
+  const removeTask = useCallback(function (taskId: string, todolistId: string) {
+    removeTaskThunk({ taskId, todolistId });
   }, []);
 
-  const addTaskCb = useCallback(function (title: string, todolistId: string) {
-    //dispatch(tasksThunks.addTask({ title, todolistId }));
-    addTask({ title, todolistId });
+  const addTask = useCallback(function (title: string, todolistId: string) {
+    addTaskThunk({ title, todolistId });
   }, []);
 
   const changeStatus = useCallback(function (taskId: string, status: TaskStatuses, todolistId: string) {
-    //dispatch(tasksThunks.updateTask({ taskId, domainModel: { status }, todolistId }));
     updateTask({ taskId, domainModel: { status }, todolistId });
   }, []);
 
   const changeTaskTitle = useCallback(function (taskId: string, title: string, todolistId: string) {
-    // dispatch(tasksThunks.updateTask({ taskId, domainModel: { title }, todolistId }));
     updateTask({ taskId, domainModel: { title }, todolistId });
   }, []);
 
   const changeFilter = useCallback(function (filter: FilterValuesType, id: string) {
-    //dispatch(todolistsActions.changeTodolistFilter({ id, filter }));
     changeTodolistFilter({ id, filter });
   }, []);
 
-  const removeTodolistCb = useCallback(function (id: string) {
-    //dispatch(todolistsThunks.removeTodolist(id));
-    removeTodolist(id);
+  const removeTodolist = useCallback(function (id: string) {
+    removeTodolistThunk(id);
   }, []);
 
-  const changeTodolistTitleCb = useCallback(function (id: string, title: string) {
-    //dispatch(todolistsThunks.changeTodolistTitle({ id, title }));
-    changeTodolistTitle({ id, title });
+  const changeTodolistTitle = useCallback(function (id: string, title: string) {
+    changeTodolistTitleThunk({ id, title });
   }, []);
 
-  const addTodolistCb = useCallback((title: string) => {
-    //dispatch(todolistsThunks.addTodolist(title));
-    addTodolist(title);
+  const addTodolist = useCallback((title: string) => {
+    addTodolistThunk(title);
   }, []);
 
   if (!isLoggedIn) {
@@ -88,7 +73,7 @@ export const TodolistsList = () => {
   return (
     <>
       <Grid container style={{ padding: "20px" }}>
-        <AddItemForm addItem={addTodolistCb} />
+        <AddItemForm addItem={addTodolist} />
       </Grid>
       <Grid container spacing={3}>
         {todolists.map((tl) => {
@@ -100,13 +85,13 @@ export const TodolistsList = () => {
                 <Todolist
                   todolist={tl}
                   tasks={allTodolistTasks}
-                  removeTask={removeTaskCb}
+                  removeTask={removeTask}
                   changeFilter={changeFilter}
-                  addTask={addTaskCb}
+                  addTask={addTask}
                   changeTaskStatus={changeStatus}
-                  removeTodolist={removeTodolistCb}
+                  removeTodolist={removeTodolist}
                   changeTaskTitle={changeTaskTitle}
-                  changeTodolistTitle={changeTodolistTitleCb}
+                  changeTodolistTitle={changeTodolistTitle}
                 />
               </Paper>
             </Grid>
