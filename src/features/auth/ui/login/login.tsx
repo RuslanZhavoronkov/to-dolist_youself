@@ -6,15 +6,68 @@ import { Button, Checkbox, FormControl, FormControlLabel, FormGroup, FormLabel, 
 import { useActions } from "common/hooks";
 import { selectIsLoggedIn } from "features/auth/model/auth.selectors";
 import { authThunks } from "features/auth/model/auth.slice";
-import { LoginParamsType } from "features/auth/api/auth.api";
 import { BaseResponseType } from "common/types";
 import s from "features/auth/ui/login/login.module.css";
+import { LoginParamsType } from "features/auth/api/auth.api";
 
-type FormikErrorType = {
-  email?: string;
-  password?: string;
-  rememberMe?: boolean;
-};
+
+
+// type UserType = {
+//   name: string
+//   age: number
+//   isMarried: boolean
+//   captcha: string
+// }
+
+// type UserType2 = {
+//   name: string
+//   age: number
+//   isMarried: boolean
+// }
+
+// type UtilityType = Partial<UserType> //универсальный тип
+// type UtilityType1 = Required<UserType>
+// type UtilityType2 = Omit<UserType, 'captcha'| 'age'>
+// type UtilityType3 = Pick<UserType, 'age' | 'name'>
+// type UtilityType4 = Partial<Pick<UserType, 'age' | 'name'>>
+
+// export type TasksStateType1 = {
+//   [key: string]: Array<UserType>;
+// };
+
+// export type TasksStateType2 = Record <string, UserType>
+
+
+// const Object = {
+//   a1: "a1",
+//   b2: 2,
+//   c9: true
+// }
+
+// type ObjectType = Record<string, unknown>
+
+// function f (a: unknown) {
+//   if (typeof a === 'number') {
+// return a * 100
+//   }
+// }
+
+
+
+// type FormikErrorType = { //тип приходящих данных в функцию validate формика formik
+//   email?: string;
+//   password?: string;
+//   rememberMe?: boolean;
+// };
+
+// export type LoginParamsType = { //для авторизации (для запроса на сервер)
+//   email: string;
+//   password: string;
+//   rememberMe: boolean;
+//   captcha?: string;
+// };
+
+type FormikErrorType = Partial<Omit <LoginParamsType, 'captcha'>>
 
 export const Login = () => {
   const { login } = useActions(authThunks);
