@@ -9,68 +9,12 @@ import { useLogin } from "./useLogin";
 
 
 
-// type UserType = {
-//   name: string
-//   age: number
-//   isMarried: boolean
-//   captcha: string
-// }
-
-// type UserType2 = {
-//   name: string
-//   age: number
-//   isMarried: boolean
-// }
-
-// type UtilityType = Partial<UserType> //универсальный тип
-// type UtilityType1 = Required<UserType>
-// type UtilityType2 = Omit<UserType, 'captcha'| 'age'>
-// type UtilityType3 = Pick<UserType, 'age' | 'name'>
-// type UtilityType4 = Partial<Pick<UserType, 'age' | 'name'>>
-
-// export type TasksStateType1 = {
-//   [key: string]: Array<UserType>;
-// };
-
-// export type TasksStateType2 = Record <string, UserType>
-
-
-// const Object = {
-//   a1: "a1",
-//   b2: 2,
-//   c9: true
-// }
-
-// type ObjectType = Record<string, unknown>
-
-// function f (a: unknown) {
-//   if (typeof a === 'number') {
-// return a * 100
-//   }
-// }
-
-
-
-// type FormikErrorType = { //тип приходящих данных в функцию validate формика formik
-//   email?: string;
-//   password?: string;
-//   rememberMe?: boolean;
-// };
-
-// export type LoginParamsType = { //для авторизации (для запроса на сервер)
-//   email: string;
-//   password: string;
-//   rememberMe: boolean;
-//   captcha?: string;
-// };
-
-
 
 export const Login = () => {
 
-const {formik} = useLogin()
+const {formik, isLoggedIn} = useLogin()
   
-  const isLoggedIn = useSelector(selectIsLoggedIn);
+  
   if (isLoggedIn) {
     return <Navigate to={"/"} />;
   }

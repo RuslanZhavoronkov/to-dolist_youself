@@ -1,9 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RequestStatusType } from "app/app.reducer";
-import { todolistsApi, TodolistType, UpdateTodolistTitleArgType } from "features/TodolistsList/todolists.api";
 import { createAppAsyncThunk, handleServerAppError, thunkTryCatch } from "common/utils";
 import { ResultCode } from "common/enums";
 import { clearTasksAndTodolists } from "common/actions";
+import { TodolistType, UpdateTodolistTitleArgType } from "features/TodolistsList/api/todolists/todolistsApi.types";
+import { todolistsApi } from "features/TodolistsList/api/todolists/todolistsApi";
 
 const fetchTodolists = createAppAsyncThunk<{ todolists: TodolistType[] }, void>(
   "todo/fetchTodolists",
