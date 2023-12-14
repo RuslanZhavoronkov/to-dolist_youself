@@ -13,8 +13,7 @@ import {
 } from "@mui/material";
 import { Menu } from "@mui/icons-material";
 import { Login } from "features/auth/ui/login/login";
-import "./App.css";
-import { TodolistsList } from "features/TodolistsList/ui/TodolistsList";
+import { TodolistsList } from "features/TodolistsList/ui/Todolist/TodolistsList";
 import { ErrorSnackbar } from "common/components";
 import { useActions } from "common/hooks";
 import { selectIsLoggedIn } from "features/auth/model/auth.selectors";
