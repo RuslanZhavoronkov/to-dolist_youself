@@ -64,8 +64,8 @@ const updateTask = createAppAsyncThunk<UpdateTaskArgType, UpdateTaskArgType>(
       if (res.data.resultCode === ResultCode.Success) {
         return arg;
       } else {
-        handleServerAppError(res.data, dispatch);
-        return rejectWithValue(null);
+        handleServerAppError(res.data, dispatch, false);
+        return rejectWithValue(res.data);
       }
     });
   },
@@ -81,7 +81,7 @@ const removeTask = createAppAsyncThunk<RemoveTaskArgType, RemoveTaskArgType>(
         return arg;
       } else {
         handleServerAppError(res.data, dispatch);
-        return rejectWithValue(null);
+        return rejectWithValue(res.data);
       }
     });
   },

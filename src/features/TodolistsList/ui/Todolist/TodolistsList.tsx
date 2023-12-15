@@ -12,6 +12,9 @@ import { selectIsLoggedIn } from "features/auth/model/auth.selectors";
 import { selectTodolists } from "features/TodolistsList/model/todolists/todolists.selectors";
 import { selectTasks } from "../../model/tasks/tasks.selectors";
 
+
+
+
 export const TodolistsList = () => {
   const todolists = useSelector(selectTodolists);
   const tasks = useSelector(selectTasks);
@@ -32,7 +35,7 @@ export const TodolistsList = () => {
 
 
   const addTodolistCb = useCallback((title: string) => {
-    addTodolist(title);
+    return addTodolist(title).unwrap() //return Promise
   }, []);
 
   if (!isLoggedIn) {
