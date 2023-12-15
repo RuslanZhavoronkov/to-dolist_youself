@@ -1,9 +1,7 @@
 import React, { useCallback, useEffect } from "react";
 import { useSelector } from "react-redux";
 import {
-  FilterValuesType,
-  todolistsActions,
-  todolistsThunks,
+  todolistsThunks
 } from "features/TodolistsList/model/todolists/todolists.reducer";
 import { Grid, Paper } from "@mui/material";
 import { AddItemForm } from "common/components";
@@ -12,8 +10,6 @@ import { Navigate } from "react-router-dom";
 import { useActions } from "common/hooks";
 import { selectIsLoggedIn } from "features/auth/model/auth.selectors";
 import { selectTodolists } from "features/TodolistsList/model/todolists/todolists.selectors";
-import { TaskStatuses } from "common/enums";
-import { tasksThunks } from "../../model/tasks/tasks.reducer";
 import { selectTasks } from "../../model/tasks/tasks.selectors";
 
 export const TodolistsList = () => {
@@ -22,14 +18,10 @@ export const TodolistsList = () => {
   const isLoggedIn = useSelector(selectIsLoggedIn);
 
   const {
-    removeTodolist: removeTodolistThunk,
-    addTodolist: addTodolistThunk,
-    fetchTodolists,
-    changeTodolistTitle: changeTodolistTitleThunk,
+    addTodolist,
+    fetchTodolists
   } = useActions(todolistsThunks);
 
-  //const { addTask: addTaskThunk, updateTask } = useActions(tasksThunks);
-  const { changeTodolistFilter } = useActions(todolistsActions);
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -38,24 +30,9 @@ export const TodolistsList = () => {
     fetchTodolists();
   }, []);
 
-  // const addTask = useCallback(function (title: string, todolistId: string) {
-  //   addTaskThunk({ title, todolistId });
-  // }, []);
 
-  // const changeFilter = useCallback(function (filter: FilterValuesType, id: string) {
-  //   changeTodolistFilter({ id, filter });
-  // }, []);
-
-  const removeTodolist = useCallback(function (id: string) {
-    removeTodolistThunk(id);
-  }, []);
-
-  const changeTodolistTitle = useCallback(function (id: string, title: string) {
-    changeTodolistTitleThunk({ id, title });
-  }, []);
-
-  const addTodolist = useCallback((title: string) => {
-    addTodolistThunk(title);
+  const addTodolistCb = useCallback((title: string) => {
+    addTodolist(title);
   }, []);
 
   if (!isLoggedIn) {
@@ -65,7 +42,7 @@ export const TodolistsList = () => {
   return (
     <>
       <Grid container style={{ padding: "20px" }}>
-        <AddItemForm addItem={addTodolist} />
+        <AddItemForm addItem={addTodolistCb} />
       </Grid>
       <Grid container spacing={3}>
         {todolists.map((tl) => {
@@ -77,8 +54,6 @@ export const TodolistsList = () => {
                 <Todolist
                   todolist={tl}
                   tasks={allTodolistTasks}
-                  removeTodolist={removeTodolist}
-                  changeTodolistTitle={changeTodolistTitle}
                 />
               </Paper>
             </Grid>
