@@ -62,10 +62,14 @@ const slice = createSlice({
     // })
     .addMatcher(isRejected,(state, action:AnyAction) => {
       state.status = "failed"
-
+      //debugger
       if(action.payload) {
         state.error = action.payload.messages[0]
-        if
+        //if(action.type.includes('addTodolist')) return
+        //if(isRejected(todolistThunks.addTodolists)) return //если этот rejected будет для тудулиста
+        if(action.type === 'todo/addTodolist/rejected') {
+          return
+        }
       } else {
         state.error = action.error.message ? action.error.message : "Some error occurred";
       }
