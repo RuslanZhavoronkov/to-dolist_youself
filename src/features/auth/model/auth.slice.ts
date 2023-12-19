@@ -1,4 +1,4 @@
-import { AnyAction, createSlice } from "@reduxjs/toolkit";
+import { AnyAction, createSlice, isAnyOf } from "@reduxjs/toolkit";
 import { appActions } from "app/app.reducer";
 import { authAPI, LoginParamsType } from "features/auth/api/auth.api";
 import { clearTasksAndTodolists } from "common/actions";
@@ -7,16 +7,16 @@ import { ResultCode } from "common/enums";
 
 const login = createAppAsyncThunk<{ isLoggedIn: boolean }, LoginParamsType>("auth/login", async (arg, thunkAPI) => {
   const { dispatch, rejectWithValue } = thunkAPI;
-  return thunkTryCatch(thunkAPI, async () => {
+ // return thunkTryCatch(thunkAPI, async () => {
     const res = await authAPI.login(arg);
     if (res.data.resultCode === ResultCode.Success) {
       return { isLoggedIn: true };
     } else {
-      const isShowAppError = !res.data.fieldsErrors.length;
-      handleServerAppError(res.data, dispatch, isShowAppError);
+      // const isShowAppError = !res.data.fieldsErrors.length;
+      // handleServerAppError(res.data, dispatch, isShowAppError);
       return rejectWithValue(res.data);
     }
-  });
+//  });
 });
 
 const logout = createAppAsyncThunk<{ isLoggedIn: boolean }, void>("auth/logout", async (_, thunkAPI) => {
@@ -33,22 +33,30 @@ const logout = createAppAsyncThunk<{ isLoggedIn: boolean }, void>("auth/logout",
   });
 });
 
-const initializeApp = createAppAsyncThunk<{ isLoggedIn: boolean }, void>("app/initializeApp", async (_, thunkAPI) => {
+const initializeApp = createAppAsyncThunk<{ isLoggedIn: boolean }, undefined>("auth/initializeApp", async (_, thunkAPI) => {
   const { dispatch, rejectWithValue } = thunkAPI;
-  try {
-    const res = await authAPI.me();
-    if (res.data.resultCode === ResultCode.Success) {
+  // try {
+   // return thunkTryCatch(thunkAPI, async()=> {
+      const res = await authAPI.me();
+    if (res.data.resultCode === 0) {
+      dispatch(appActions.setAppInitialized({isInitialized: true}))
       return { isLoggedIn: true };
     } else {
+     dispatch(appActions.setAppInitialized({isInitialized: true}))
       return rejectWithValue(null);
     }
-  } catch (e) {
-    handleServerNetworkError(e, dispatch);
-    return rejectWithValue(null);
-  } finally {
-    dispatch(appActions.setAppInitialized({ isInitialized: true }));
-  }
-});
+    // }).finally(()=> {
+    //   dispatch(appActions.setAppInitialized({isInitialized: true}))
+    // })
+    
+  // // } catch (e) {
+  // //   handleServerNetworkError(e, dispatch);
+  // //   return rejectWithValue(null);
+  // // } 
+  // } finally {
+  //   dispatch(appActions.setAppInitialized({ isInitialized: true }));
+  // }
+})
 
 const slice = createSlice({
   name: "auth",
@@ -68,22 +76,25 @@ const slice = createSlice({
       //   state.isLoggedIn = action.payload.isLoggedIn;
       // })
       .addMatcher(
-        (action: AnyAction) => {
-          if (
-            action.type === "app/initializeApp/fulfilled" ||
-            action.type === "auth/login/fulfilled" ||
-            action.type === "auth/logout/fulfilled"
-          ) {
-            return true;
-          } else {
-            return false;
-          }
-        },
+        // (action: AnyAction) => {
+        //   if (
+        //     action.type === "app/initializeApp/fulfilled" ||
+        //     action.type === "auth/login/fulfilled" ||
+        //     action.type === "auth/logout/fulfilled"
+        //   ) {
+        //     return true;
+        //   } else {
+        //     return false;
+        //   }
+        // },
+        isAnyOf(authThunks.login.fulfilled, authThunks.logout.fulfilled, authThunks.initializeApp.fulfilled),
         (state, action) => {
          // debugger
           state.isLoggedIn = action.payload.isLoggedIn;
         },
-      );
+      )
+      
+     
   },
 });
 

@@ -1,4 +1,7 @@
-import { AnyAction, createSlice, isFulfilled, isPending, isRejected, PayloadAction } from "@reduxjs/toolkit";
+import { AnyAction, createSlice, isAnyOf, isFulfilled, isPending, isRejected, PayloadAction } from "@reduxjs/toolkit";
+import { tasksThunks } from "features/TodolistsList/model/tasks/tasks.reducer";
+import { todolistsThunks } from "features/TodolistsList/model/todolists/todolists.reducer";
+import { authThunks } from "features/auth/model/auth.slice";
 
 const initialState = {
   status: "idle" as RequestStatusType,
@@ -62,19 +65,27 @@ const slice = createSlice({
     // })
     .addMatcher(isRejected,(state, action:AnyAction) => {
       state.status = "failed"
-      //debugger
+     // debugger
+      //if (action.type ==="tasks/addTask/rejected") {
+      if (action.type === tasksThunks.addTask.rejected.type) {
+        return
+      } 
       if(action.payload) {
-        state.error = action.payload.messages[0]
-        //if(action.type.includes('addTodolist')) return
-        //if(isRejected(todolistThunks.addTodolists)) return //если этот rejected будет для тудулиста
-        if(action.type === 'todo/addTodolist/rejected') {
+        //if(action.type === 'todo/addTodolist/rejected'){
+        if(action.type === todolistsThunks.addTodolist.rejected.type){
           return
-        }
+        } 
+        
+        state.error = action.payload.messages[0]
       } else {
         state.error = action.error.message ? action.error.message : "Some error occurred";
       }
       
-    } )
+    })
+    .addMatcher(isAnyOf(authThunks.initializeApp.fulfilled, authThunks.initializeApp.rejected)
+    , (state, action)=> {
+state.isInitialized = true
+     })
   }
 });
 
